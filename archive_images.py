@@ -24,7 +24,12 @@ def add_directory_to_zip(zipf:zipfile.ZipFile,path:str):
                 os.path.relpath(os.path.join(root,file),os.path.join(path,".."))
             )
 
-def main(images_dir:str,save_dir:str,dirs_per_archive:int,resume_index:int):
+def main(
+    images_dir:str,
+    save_dir:str,
+    dirs_per_archive:int,
+    index_lower_bound:int,
+    index_upper_bound:int):
     os.makedirs(save_dir,exist_ok=True)
 
     pathname=os.path.join(images_dir,"*")
@@ -35,8 +40,10 @@ def main(images_dir:str,save_dir:str,dirs_per_archive:int,resume_index:int):
         num_archives+=1
     
     for i in tqdm(range(num_archives)):
-        if i<resume_index:
+        if i<index_lower_bound:
             continue
+        if index_upper_bound>=0 and i>=index_upper_bound:
+            break
 
         start_index=i*dirs_per_archive
         if i==num_archives-1:
@@ -56,8 +63,15 @@ if __name__=="__main__":
     parser.add_argument("--images_dir",type=str)
     parser.add_argument("--save_dir",type=str)
     parser.add_argument("--dirs_per_archive",type=int,default=500)
-    parser.add_argument("--resume_index",type=int,default=-1)
+    parser.add_argument("--index_lower_bound",type=int,default=-1)
+    parser.add_argument("--index_upper_bound",type=int,default=-1)
 
     args=parser.parse_args()
 
-    main(args.images_dir,args.save_dir,args.dirs_per_archive,args.resume_index)
+    main(
+        args.images_dir,
+        args.save_dir,
+        args.dirs_per_archive,
+        args.index_lower_bound,
+        args.index_upper_bound
+    )

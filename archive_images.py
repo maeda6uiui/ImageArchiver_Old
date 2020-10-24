@@ -13,7 +13,7 @@ logging.basicConfig(format=logging_fmt)
 logger = logging.getLogger(__name__)
 logger.setLevel(level=logging.INFO)
 
-def add_directory_to_zip(zipf:zipfile.ZipFile,path:str,):
+def add_directory_to_zip(zipf:zipfile.ZipFile,path:str):
     """
     ZIPファイルにディレクトリを追加する。
     """

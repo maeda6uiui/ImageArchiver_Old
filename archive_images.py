@@ -6,7 +6,6 @@ import glob
 import logging
 import os
 import zipfile
-from tqdm import tqdm
 
 logging_fmt = "%(asctime)s %(levelname)s: %(message)s"
 logging.basicConfig(format=logging_fmt)
@@ -39,11 +38,13 @@ def main(
     if mod!=0:
         num_archives+=1
     
-    for i in tqdm(range(num_archives)):
+    for i in range(num_archives):
         if i<index_lower_bound:
             continue
         if index_upper_bound>=0 and i>=index_upper_bound:
             break
+
+        logger.info("{}".format(i))
 
         start_index=i*dirs_per_archive
         if i==num_archives-1:

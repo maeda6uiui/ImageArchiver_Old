@@ -28,7 +28,8 @@ def main(
     save_dir:str,
     dirs_per_archive:int,
     index_lower_bound:int,
-    index_upper_bound:int):
+    index_upper_bound:int,
+    filename_start_index:int):
     os.makedirs(save_dir,exist_ok=True)
 
     pathname=os.path.join(images_dir,"*")
@@ -38,13 +39,14 @@ def main(
     if mod!=0:
         num_archives+=1
     
+    filename_index=filename_start_index
     for i in range(num_archives):
         if i<index_lower_bound:
             continue
         if index_upper_bound>=0 and i>=index_upper_bound:
             break
 
-        logger.info("{}".format(i))
+        logger.info("===== {} =====".format(i))
 
         start_index=i*dirs_per_archive
         if i==num_archives-1:
@@ -53,7 +55,10 @@ def main(
             end_index=(i+1)*dirs_per_archive
         target_directories=directories[start_index:end_index]
 
-        zip_filepath=os.path.join(save_dir,str(i)+".zip")
+        zip_filepath=os.path.join(save_dir,str(filename_index)+".zip")
+        logger.info("アーカイブのファイルパス: {}".format(zip_filepath))
+        filename_index+=1
+
         with zipfile.ZipFile(zip_filepath,"w",zipfile.ZIP_DEFLATED) as zipf:
             for target_directory in target_directories:
                 add_directory_to_zip(zipf,target_directory)
@@ -66,6 +71,7 @@ if __name__=="__main__":
     parser.add_argument("--dirs_per_archive",type=int,default=500)
     parser.add_argument("--index_lower_bound",type=int,default=-1)
     parser.add_argument("--index_upper_bound",type=int,default=-1)
+    parser.add_argument("--filename_start_index",type=int,default=0)
 
     args=parser.parse_args()
 
@@ -74,5 +80,6 @@ if __name__=="__main__":
         args.save_dir,
         args.dirs_per_archive,
         args.index_lower_bound,
-        args.index_upper_bound
+        args.index_upper_bound,
+        args.filename_start_index
     )
